@@ -222,7 +222,7 @@ async function test() {
     const tokens = await aliceUseContract.nft_tokens({
         args: {
             from_index: '0',
-            limit: 4,
+            limit: 2,
         },
     })
 
@@ -236,11 +236,11 @@ async function test() {
             await aliceUseContract.nft_tokens({
                 args: {
                     from_index: '0',
-                    limit: i * 5,
+                    limit: i,
                 },
             })
         } catch {
-            console.log(`limit for "nft_tokens" without gas is ${(i - 1) * 5}`)
+            console.log(`limit for "nft_tokens" without gas is ${i - 1}`)
             break
         }
     }
