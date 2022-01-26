@@ -206,7 +206,7 @@ async function test() {
     // a. get NFT Total Supply
 
     const total_supply = await bobUseContract.nft_total_supply()
-    assert.equal(total_supply, 100)
+    assert.equal(total_supply, "100")
     console.log('"nft_total_supply" returns the right amount: "50"')
 
     // b. get NFT Supply for Owner
@@ -214,7 +214,7 @@ async function test() {
     const nft_supply_for_alice = await aliceUseContract.nft_supply_for_owner({
         account_id: 'bob.test.near',
     })
-    assert.equal(nft_supply_for_alice, 50)
+    assert.equal(nft_supply_for_alice, "50")
     console.log('nft_supply_for_owner returns the right amount "50"')
 
     // c. get nft tokens
