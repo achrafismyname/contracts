@@ -206,7 +206,7 @@ async function test() {
     // a. get NFT Total Supply
 
     const total_supply = await bobUseContract.nft_total_supply()
-    assert.equal(total_supply, "100")
+    assert.equal(total_supply, '100')
     console.log('"nft_total_supply" returns the right amount: "50"')
 
     // b. get NFT Supply for Owner
@@ -214,28 +214,36 @@ async function test() {
     const nft_supply_for_alice = await aliceUseContract.nft_supply_for_owner({
         account_id: 'bob.test.near',
     })
-    assert.equal(nft_supply_for_alice, "50")
-    console.log('nft_supply_for_owner returns the right amount "50"')
+    assert.equal(nft_supply_for_alice, '50')
+    console.log('"nft_supply_for_owner" returns the right amount "50"')
 
     // c. get nft tokens
 
-    let tokens
+    const tokens = await aliceUseContract.nft_tokens({
+        args: {
+            from_index: '0',
+            limit: 4,
+        },
+    })
+
+    console.log(`"nft_tokens" work perfectly`)
+
+    // d. get nft_tokens limit
+
     for (let i = 1; i < 11; i++) {
         // trying to find limit
         try {
-            tokens = await aliceUseContract.nft_tokens({
+            await aliceUseContract.nft_tokens({
                 args: {
                     from_index: '0',
                     limit: i * 5,
                 },
             })
         } catch {
-            console.log(`limit for nft_tokens without gas is ${(i - 1) * 5}`)
+            console.log(`limit for "nft_tokens" without gas is ${(i - 1) * 5}`)
             break
         }
     }
-
-    console.log(`nft_tokens work perfectly`)
 
     return
     //
