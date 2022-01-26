@@ -66,7 +66,7 @@ async function createContractUser(
     await masterAccount.createAccount(
         accountId,
         pubKey,
-        new BN(10).pow(new BN(25))
+        new BN(10).pow(new BN(26))
     )
     keyStore.setKey(config.networkId, accountId, masterKey)
     const account = new nearAPI.Account(near.connection, accountId)
@@ -219,11 +219,23 @@ async function test() {
 
     // c. get nft tokens
 
-    const tokens = await aliceUseContract.nft_tokens({
-        args: {
-            account_id: 'bob.test.near',
-        },
-    })
+    let tokens
+    for (let i = 1; i < 11; i++) {
+        // trying to find limit
+        try {
+            tokens = await aliceUseContract.nft_tokens({
+                args: {
+                    from_index: '0',
+                    limit: i * 5,
+                },
+            })
+        } catch {
+            console.log(`limit for nft_tokens without gas is ${(i - 1) * 5}`)
+            break
+        }
+    }
+
+    console.log(`nft_tokens work perfectly`)
 
     return
     //
