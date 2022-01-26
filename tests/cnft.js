@@ -152,9 +152,15 @@ function random_token_metadata() {
     return TOKEN_METADATA
 }
 
-const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
-const CONTRACT_MINT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
-const CONTRACT_TOKENS_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
+// Test configs
+
+const TOTAL_MINT = 10
+
+// Gas
+const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
+const CONTRACT_MINT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
+const CONTRACT_TOKENS_GAS =
+    nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
 const CONTRACT_MINT_PRICE = nearAPI.utils.format.parseNearAmount('1') // 1N
 
 // Test
@@ -177,10 +183,10 @@ async function test() {
     console.log('Init contract by Alice')
 
     /**
-     * 3. Mint 100 tokens (50 for Alice, 50 for Bob)
+     * 3. Minting tokens
      */
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < TOTAL_MINT / 2; i++) {
         await aliceUseContract.mint({
             args: {
                 tokenMetadata: random_token_metadata(),
@@ -198,7 +204,11 @@ async function test() {
             amount: CONTRACT_MINT_PRICE,
         })
     }
-    console.log('Minted 50 NFTs for Alice and 50 NFTs for Bob')
+    console.log(
+        `Minted ${TOTAL_MINT / 2} NFTs for Alice and ${
+            TOTAL_MINT / 2
+        } NFTs for Bob`
+    )
 
     /**
      * 4. Test enumeration methods
@@ -207,23 +217,25 @@ async function test() {
     // a. get NFT Total Supply
 
     const total_supply = await bobUseContract.nft_total_supply()
-    assert.equal(total_supply, '100')
-    console.log('"nft_total_supply" returns the right amount: "50"')
+    assert.equal(total_supply, TOTAL_MINT)
+    console.log(`"nft_total_supply" returns the right amount: ${TOTAL_MINT}`)
 
     // b. get NFT Supply for Owner
 
     const nft_supply_for_alice = await aliceUseContract.nft_supply_for_owner({
         account_id: 'bob.test.near',
     })
-    assert.equal(nft_supply_for_alice, '50')
-    console.log('"nft_supply_for_owner" returns the right amount "50"')
+    assert.equal(nft_supply_for_alice, TOTAL_MINT / 2)
+    console.log(
+        `"nft_supply_for_owner" returns the right amount ${TOTAL_MINT / 2}`
+    )
 
     // c. get nft tokens
 
     const tokens = await aliceUseContract.nft_tokens({
         args: {
             from_index: '0',
-            limit: 20,
+            limit: 10,
         },
         gas: CONTRACT_TOKENS_GAS,
     })
@@ -232,7 +244,7 @@ async function test() {
 
     // d. get nft_tokens limit
 
-    for (let i = 1; i < 11; i++) {
+    for (let i = 1; i < TOTAL_MINT; i++) {
         // trying to find limit
         try {
             await aliceUseContract.nft_tokens({
