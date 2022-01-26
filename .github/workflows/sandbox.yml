@@ -32,10 +32,7 @@ jobs:
               run: |
                   yarn install
                   yarn build-cnft
-                  yarn build-market
-                  yarn build-nft
             - name: 'Testing contracts'
               working-directory: ./contracts
               run: |
                   node tests/cnft.js
-                  node tests/nft.js
