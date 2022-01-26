@@ -154,7 +154,7 @@ function random_token_metadata() {
 
 // Test configs
 
-const TOTAL_MINT = 10
+const TOTAL_MINT = 50
 
 // Gas
 const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
