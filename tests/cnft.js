@@ -154,6 +154,7 @@ function random_token_metadata() {
 
 const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
 const CONTRACT_MINT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
+const CONTRACT_TOKENS_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
 const CONTRACT_MINT_PRICE = nearAPI.utils.format.parseNearAmount('1') // 1N
 
 // Test
@@ -222,11 +223,12 @@ async function test() {
     const tokens = await aliceUseContract.nft_tokens({
         args: {
             from_index: '0',
-            limit: 2,
+            limit: 20,
         },
+        gas: CONTRACT_TOKENS_GAS,
     })
 
-    console.log(`"nft_tokens" work perfectly`)
+    console.log(`"nft_tokens" works well`)
 
     // d. get nft_tokens limit
 
