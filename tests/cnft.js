@@ -152,37 +152,126 @@ function random_token_metadata() {
     return TOKEN_METADATA
 }
 
-const CONTRACT_CLAIM_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
-const CONTRACT_CLAIM_PRICE = nearAPI.utils.format.parseNearAmount('1') // 1N
+const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
+const CONTRACT_MINT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000029') // 300 Tgas
+const CONTRACT_MINT_PRICE = nearAPI.utils.format.parseNearAmount('1') // 1N
 
 // Test
 async function test() {
-    // 1. Creates testing accounts and deploys a contract
+    /**
+     * 1. Creates testing accounts and deploys a contract
+     */
     await initNear()
-    const { aliceUseContract } = await initTest()
+    const { aliceUseContract, bobUseContract } = await initTest()
 
-    // 2. Initialize the contract metadata
+    /**
+     * 2. Initialize the contract metadata
+     */
     await aliceUseContract.init({
         args: {
             contract_metadata: CONTRACT_METADATA,
         },
-        gas: CONTRACT_CLAIM_GAS,
-        amount: CONTRACT_CLAIM_PRICE,
+        gas: CONTRACT_INIT_GAS,
     })
-    await aliceUseContract.mint({
+    console.log('Init contract by Alice')
+
+    /**
+     * 3. Mint 100 tokens (50 for Alice, 50 for Bob)
+     */
+
+    for (let i = 0; i < 50; i++) {
+        await aliceUseContract.mint({
+            args: {
+                tokenMetadata: random_token_metadata(),
+                token_royalty: TOKEN_ROYALTY,
+            },
+            gas: CONTRACT_MINT_GAS,
+            amount: CONTRACT_MINT_PRICE,
+        })
+        await bobUseContract.mint({
+            args: {
+                tokenMetadata: random_token_metadata(),
+                token_royalty: TOKEN_ROYALTY,
+            },
+            gas: CONTRACT_MINT_GAS,
+            amount: CONTRACT_MINT_PRICE,
+        })
+    }
+    console.log('Minted 50 NFTs for Alice and 50 NFTs for Bob')
+
+    /**
+     * 4. Test enumeration methods
+     */
+
+    // a. get NFT Total Supply
+
+    const total_supply = await bobUseContract.nft_total_supply()
+    assert.equal(total_supply, 100)
+    console.log('"nft_total_supply" returns the right amount: "50"')
+
+    // b. get NFT Supply for Owner
+
+    const nft_supply_for_alice = await aliceUseContract.nft_supply_for_owner({
+        account_id: 'bob.test.near',
+    })
+    assert.equal(nft_supply_for_alice, 50)
+    console.log('nft_supply_for_owner returns the right amount "50"')
+
+    // c. get nft tokens
+
+    const tokens = await aliceUseContract.nft_tokens({
         args: {
-            tokenMetadata: random_token_metadata(),
-            token_royalty: TOKEN_ROYALTY,
+            account_id: 'bob.test.near',
         },
-        gas: CONTRACT_CLAIM_GAS,
-        amount: CONTRACT_CLAIM_PRICE,
     })
 
-    const cMeta = await aliceUseContract.nft_metadata()
-    assert.equal(cMeta.symbol, CONTRACT_METADATA.symbol)
-    
-    const tokens = await aliceUseContract.nft_tokens()
-    console.log(tokens);
+    return
+    //
+    const alice_tokens = await aliceUseContract.nft_tokens_for_owner({
+        args: {
+            account_id: 'alice.test.near',
+        },
+    })
+    const bob_tokens = await aliceUseContract.nft_tokens_for_owner({
+        args: {
+            account_id: 'bob.test.near',
+        },
+    })
+
+    console.log(alice_tokens)
+    assert.equal(alice_tokens[0].owner_id, 'alice.test.near')
+    assert.equal(alice_tokens[0].metadata, TOKEN_METADATA_1)
+    assert.equal(bob_tokens[0].owner_id, 'bob.test.near')
+    assert.equal(bob_tokens[0].metadata, TOKEN_METADATA_2)
+
+    console.log('nft_tokens_for_owner returned the right data')
+
+    // 3. Bob bids on Alice token
+    await bobUseContract.bid({
+        tokenId: alice_tokens[0].id,
+        amount: 1,
+    })
+    console.log('Bob bidded on Alice token')
+
+    // 3.1 get bids for Alice token
+    const bids_for_alice = await aliceUseContract.get_bids({
+        tokenId: alice_tokens[0].id,
+    })
+    assert.equal(bids_for_alice[0].amount, 1)
+    assert.equal(bids_for_alice[0].bidder, 'bob.test.near')
+
+    console.log('get_bids returns the right data')
+
+    // 3.1 get bids made by Bob
+    const bids_by_bob = await bobUseContract.get_bidder_bids({
+        accountId: 'bob.test.near',
+    })
+    assert.equal(bids_by_bob[0].amount, 1)
+    assert.equal(bids_by_bob[0].bidder, 'bob.test.near')
+
+    console.log('get_bidder_bids returns the right data')
+
+    // 4. To Be Continued :-)
 }
 
 test()
