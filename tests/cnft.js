@@ -160,7 +160,7 @@ const TOTAL_MINT = 50
 const CONTRACT_INIT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
 const CONTRACT_MINT_GAS = nearAPI.utils.format.parseNearAmount('0.00000000030') // 300 Tgas
 const CONTRACT_TOKENS_GAS =
-    nearAPI.utils.format.parseNearAmount('0.00000000060') // 600 Tgas
+    nearAPI.utils.format.parseNearAmount('0.00000000100') // 1000 Tgas
 const CONTRACT_MINT_PRICE = nearAPI.utils.format.parseNearAmount('1') // 1N
 
 // Test
