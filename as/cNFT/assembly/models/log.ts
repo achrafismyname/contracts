@@ -1,6 +1,7 @@
 import { NFTContractMetadata } from './persistent_nft_contract_metadata'
 import { Token } from './persistent_tokens'
 import { TokenMetadata } from './persistent_tokens_metadata'
+import { u128 } from "near-sdk-as";
 
 // An event log to capture token minting
 @nearBindgen
@@ -56,6 +57,6 @@ export class NftEventLogData<T> {
 export class NftBidLog {
     bidder_id: string
     token_ids: string[]
-    amount: number
+    amount: u128
     memo: string = ''
 }
