@@ -235,7 +235,7 @@ async function test() {
     const tokens = await aliceUseContract.nft_tokens({
         args: {
             from_index: '0',
-            limit: 5,
+            limit: 2,
         },
         gas: CONTRACT_TOKENS_GAS,
     })
