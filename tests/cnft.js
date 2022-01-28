@@ -104,7 +104,7 @@ async function initTest() {
 
 // Utils
 function randomString(length) {
-    let result = ' '
+    let result = ''
     const characters =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     const charactersLength = characters.length
@@ -294,7 +294,7 @@ async function test() {
 
     // b. Alice get bids 
     const bids_for_alice = await aliceUseContract.get_bids({
-        tokenId: alice_tokens[0].id,
+        tokenId: aliceTokens[0].id,
     })
     assert.equal(bids_for_alice[0].amount, "1")
     assert.equal(bids_for_alice[0].bidder, 'bob.test.near')
