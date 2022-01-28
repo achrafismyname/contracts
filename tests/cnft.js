@@ -205,8 +205,7 @@ async function test() {
         })
     }
     console.log(
-        `Minted ${TOTAL_MINT / 2} NFTs for Alice and ${
-            TOTAL_MINT / 2
+        `Minted ${TOTAL_MINT / 2} NFTs for Alice and ${TOTAL_MINT / 2
         } NFTs for Bob`
     )
 
@@ -232,8 +231,9 @@ async function test() {
 
     // c. get nft tokens
 
-    const tokens = await aliceUseContract.nft_tokens({
+    const tokens = await aliceUseContract.nft_tokens_for_owner({
         args: {
+            account_id: 'alice.test',
             from_index: '0',
             limit: 2,
         },
@@ -243,7 +243,7 @@ async function test() {
     console.log(`"nft_tokens" works well`)
 
     // d. get nft_tokens limit
-    
+
     /** @notice currently nft_token can fetch 0 tokens without gas :) */
 
     // for (let i = 1; i < TOTAL_MINT; i++) {
