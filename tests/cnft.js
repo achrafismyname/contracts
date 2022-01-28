@@ -288,7 +288,7 @@ async function test() {
     // a. Bob bids on Alice token
     await bobUseContract.bid({
         tokenId: aliceTokens[0].id,
-        amount: 1,
+        amount: "1",
     })
     console.log(`"bid" works well`)
 
@@ -296,7 +296,7 @@ async function test() {
     const bids_for_alice = await aliceUseContract.get_bids({
         tokenId: alice_tokens[0].id,
     })
-    assert.equal(bids_for_alice[0].amount, 1)
+    assert.equal(bids_for_alice[0].amount, "1")
     assert.equal(bids_for_alice[0].bidder, 'bob.test.near')
 
     console.log('get_bids returns the right data')
@@ -305,7 +305,7 @@ async function test() {
     const bids_by_bob = await bobUseContract.get_bidder_bids({
         accountId: 'bob.test.near',
     })
-    assert.equal(bids_by_bob[0].amount, 1)
+    assert.equal(bids_by_bob[0].amount, "1")
     assert.equal(bids_by_bob[0].bidder, 'bob.test.near')
 
     console.log('get_bidder_bids returns the right data')
