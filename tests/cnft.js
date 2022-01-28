@@ -240,50 +240,59 @@ async function test() {
 
     // d. get nft_tokens limit
 
-    /** @notice currently nft_token can fetch 0 tokens without gas :) */
-
     for (let i = 1; i < TOTAL_MINT; i++) {
         // trying to find limit
         try {
             await aliceUseContract.nft_tokens({
                 from_index: '0',
                 limit: i,
-            }, CONTRACT_TOKENS_GAS)
+            })
         } catch {
             console.log(`limit for "nft_tokens" without gas is ${i - 1}`)
             break
         }
     }
 
-    return
-    //
-    const alice_tokens = await aliceUseContract.nft_tokens_for_owner({
-        args: {
-            account_id: 'alice.test.near',
-        },
-    })
-    const bob_tokens = await aliceUseContract.nft_tokens_for_owner({
-        args: {
-            account_id: 'bob.test.near',
-        },
+    // e. get nft tokens for owner
+
+    const aliceTokens = await aliceUseContract.nft_tokens_for_owner({
+        account_id: "alice.test.near",
+        from_index: '0',
+        limit: 2,
     })
 
-    console.log(alice_tokens)
-    assert.equal(alice_tokens[0].owner_id, 'alice.test.near')
-    assert.equal(alice_tokens[0].metadata, TOKEN_METADATA_1)
-    assert.equal(bob_tokens[0].owner_id, 'bob.test.near')
-    assert.equal(bob_tokens[0].metadata, TOKEN_METADATA_2)
+    console.log(`"nft_tokens_for_owner" works well`)
 
-    console.log('nft_tokens_for_owner returned the right data')
+    // f. get nft_tokens limit
 
-    // 3. Bob bids on Alice token
+    for (let i = 1; i < TOTAL_MINT; i++) {
+        // trying to find limit
+        try {
+            await aliceUseContract.nft_tokens_for_owner({
+                account_id: "alice.test.near",
+                from_index: '0',
+                limit: i,
+            })
+        } catch {
+            console.log(`limit for "nft_tokens_for_owner" without gas is ${i - 1}`)
+            break
+        }
+    }
+
+
+
+    /**
+     * 5. Test market methods
+     */
+
+    // a. Bob bids on Alice token
     await bobUseContract.bid({
-        tokenId: alice_tokens[0].id,
+        tokenId: aliceTokens[0].id,
         amount: 1,
     })
-    console.log('Bob bidded on Alice token')
+    console.log(`"bid" works well`)
 
-    // 3.1 get bids for Alice token
+    // b. Alice get bids 
     const bids_for_alice = await aliceUseContract.get_bids({
         tokenId: alice_tokens[0].id,
     })
@@ -292,7 +301,7 @@ async function test() {
 
     console.log('get_bids returns the right data')
 
-    // 3.1 get bids made by Bob
+    // c. get bids made by Bob
     const bids_by_bob = await bobUseContract.get_bidder_bids({
         accountId: 'bob.test.near',
     })
