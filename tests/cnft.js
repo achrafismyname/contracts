@@ -232,12 +232,9 @@ async function test() {
     // c. get nft tokens
 
     const tokens = await aliceUseContract.nft_tokens_for_owner({
-        args: {
-            account_id: 'alice.test',
-            from_index: '0',
-            limit: 2,
-        },
-        gas: CONTRACT_TOKENS_GAS,
+        account_id: 'alice.test',
+        from_index: '0',
+        limit: 2,
     })
 
     console.log(`"nft_tokens" works well`)
